@@ -14,7 +14,7 @@ return new class extends Migration
     {
         Schema::create('keys', function (Blueprint $table) {
             $table->id();
-            $table->string('value')->unique()->default(Str::random(10));
+            $table->string('value')->unique();
             $table->enum('status', ['used', 'unused'])->default('unused');
             $table->morphs('keyable');
             $table->timestamps();

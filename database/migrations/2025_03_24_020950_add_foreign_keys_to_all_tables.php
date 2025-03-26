@@ -13,18 +13,22 @@ return new class extends Migration
     {
         Schema::table('all_tables', function (Blueprint $table) {
             Schema::table('baladiyas', function (Blueprint $table) {
-            $table->foreignId('wilaya_id')->constrained('wilayas')->cascadeOnDelete();
+                $table->foreignId('wilaya_id')->constrained('wilayas')->cascadeOnDelete();
+            });
+
+            Schema::table('users', function (Blueprint $table) {
+                $table->foreignId('key_id')->constrained('keys')->cascadeOnDelete();
             });
 
             // Add foreign key to 'mechtas' table
             Schema::table('mechtas', function (Blueprint $table) {
-            $table->foreignId('baladiya_id')->constrained('baladiyas')->cascadeOnDelete();
+                $table->foreignId('baladiya_id')->constrained('baladiyas')->cascadeOnDelete();
             });
 
             // Add foreign key to 'farms' table
             Schema::table('farms', function (Blueprint $table) {
-            $table->foreignId('mechta_id')->constrained('mechtas')->cascadeOnDelete();
-            $table->foreignId('farmer_id')->constrained('farmers')->cascadeOnDelete();
+                $table->foreignId('mechta_id')->constrained('mechtas')->cascadeOnDelete();
+                $table->foreignId('farmer_id')->constrained('farmers')->cascadeOnDelete();
             });
 
             // Add foreign key to 'pictures' table
@@ -32,25 +36,25 @@ return new class extends Migration
 
             // Add foreign key to 'animal_illness' table
             Schema::table('animal_illnesses', function (Blueprint $table) {
-            $table->foreignId('animal_id')->constrained('animals')->cascadeOnDelete();
-            $table->foreignId('illness_id')->constrained('illnesses')->cascadeOnDelete();
+                $table->foreignId('animal_id')->constrained('animals')->cascadeOnDelete();
+                $table->foreignId('illness_id')->constrained('illnesses')->cascadeOnDelete();
             });
 
             // Add foreign key to 'animals' table
             Schema::table('animals', function (Blueprint $table) {
-            $table->foreignId('farm_id')->constrained('farms')->cascadeOnDelete();
-            $table->foreignId('animal_type_id')->constrained('animal_types')->cascadeOnDelete();
+                $table->foreignId('farm_id')->constrained('farms')->cascadeOnDelete();
+                $table->foreignId('animal_type_id')->constrained('animal_types')->cascadeOnDelete();
             });
 
             // Add foreign key to 'qr_codes' table
             Schema::table('q_r_codes', function (Blueprint $table) {
-            $table->foreignId('animal_id')->constrained('animals')->cascadeOnDelete();
+                $table->foreignId('animal_id')->constrained('animals')->cascadeOnDelete();
             });
 
             // Add foreign key to 'animal_vaccine' table
             Schema::table('animal_vaccines', function (Blueprint $table) {
-            $table->foreignId('animal_id')->constrained('animals')->cascadeOnDelete();
-            $table->foreignId('vaccine_id')->constrained('vaccines')->cascadeOnDelete();
+                $table->foreignId('animal_id')->constrained('animals')->cascadeOnDelete();
+                $table->foreignId('vaccine_id')->constrained('vaccines')->cascadeOnDelete();
             });
         });
     }

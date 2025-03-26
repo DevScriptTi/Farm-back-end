@@ -4,6 +4,7 @@ namespace App\Models\Api\User;
 
 use App\Models\Api\Extra\Key;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Admin extends Model
 {
@@ -18,6 +19,9 @@ class Admin extends Model
             $model->slug = str($model->username)->slug() . '-' . mt_rand(10000, 99999);
         });
 
+        static::created(function ($model) {
+            $model->key()->create(["value"=>Str::random(10)]);
+        });
 
         static::updating(function ($model) {
             $model->slug = str($model->username)->slug() . '-' . mt_rand(10000, 99999);
