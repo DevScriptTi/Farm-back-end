@@ -18,14 +18,17 @@ class AuthController extends Controller
         $request->validate([
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string',
+            'phone' => 'required|string',
             'token' => 'required|string|exists:keys,value',
         ]);
+
         $key = Key::where('value', $request->token)->first();
         if($key->status === "used"){
             return response()->json(['message' => 'Token already used'], 400);
         }
         $key->user()->create([
             'email' => $request->email,
+            'phone' => $request->phone,
             'password' => bcrypt($request->password),
         ]);
         $key->update(['status' => 'used']);
@@ -79,32 +82,31 @@ class AuthController extends Controller
         return response()->json(['message' => 'Password reset token sent to your email.']);
     }
 
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'token' => 'required|string',
+            'password' => 'required|string|confirmed',
+        ]);
 
-public function resetPassword(Request $request)
-{
-    $request->validate([
-        'email' => 'required|email',
-        'token' => 'required|string',
-        'password' => 'required|string|confirmed',
-    ]);
+        $reset = DB::table('password_reset_tokens')
+                    ->where('email', $request->email)
+                    ->where('token', $request->token)
+                    ->first();
 
-    $reset = DB::table('password_reset_tokens')
-                ->where('email', $request->email)
-                ->where('token', $request->token)
-                ->first();
+        if (!$reset) {
+            return response()->json(['message' => 'Invalid token or email.'], 400);
+        }
 
-    if (!$reset) {
-        return response()->json(['message' => 'Invalid token or email.'], 400);
+        // Update the user's password
+        $user = User::where('email', $request->email)->first();
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        // Delete the token
+        DB::table('password_reset_tokens')->where('email', $request->email)->delete();
+
+        return response()->json(['message' => 'Password has been reset successfully.']);
     }
-
-    // Update the user's password
-    $user = User::where('email', $request->email)->first();
-    $user->password = Hash::make($request->password);
-    $user->save();
-
-    // Delete the token
-    DB::table('password_reset_tokens')->where('email', $request->email)->delete();
-
-    return response()->json(['message' => 'Password has been reset successfully.']);
-}
 }

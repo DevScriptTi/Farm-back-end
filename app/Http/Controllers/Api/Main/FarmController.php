@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Api\Main;
 
 use App\Http\Controllers\Controller;
+use App\Models\Api\Main\Farm;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class FarmController extends Controller
 {
@@ -12,38 +14,77 @@ class FarmController extends Controller
      */
     public function index()
     {
-        //
+        $farms = Farm::with(['farmer.picture', 'mechta.baladiya.wilaya'])->get();
+        return response()->json([
+            'status' => true,
+            'message' => 'Farms retrieved successfully',
+            'data' => $farms
+        ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'mechta_id' => 'required|exists:mechtas,id',
+        ]);
+        if(Auth::user()->key->keyable_type === "admin"){
+            $request->validate([
+                'farmer_id' => 'required|exists:farmers,id',
+            ]);
+        }
+
+        $farm = Farm::create($request->all());
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Farm created successfully',
+            'data' => $farm
+        ]);
+
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show(Farm $farm)
     {
-        //
+        return response()->json([
+            'status' => true,
+            'message' => 'Farm retrieved successfully',
+            'data' => $farm->load(['farmer.picture', 'mechta.baladiya.wilaya'])
+        ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+
+    public function update(Request $request, Farm $farm)
     {
-        //
+        $request->validate([
+            'name' => 'sometimes|required|string|max:255',
+            'mechta_id' => 'sometimes|required|exists:mechtas,id',
+        ]);
+
+        if(Auth::user()->key->keyable_type === "admin"){
+            $request->validate([
+                'farmer_id' => 'required|exists:farmers,id',
+            ]);
+        }
+
+        $farm->update($request->all());
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Farm updated successfully',
+            'data' => $farm->load(['farmer.picture', 'mechta.baladiya.wilaya'])
+        ]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy(Farm $farm)
     {
-        //
+        $farm->animals()->delete();
+        $farm->delete();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Farm deleted successfully',
+        ]);
     }
+
 }

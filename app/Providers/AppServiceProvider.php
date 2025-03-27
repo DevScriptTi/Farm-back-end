@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\Api\User\Admin;
+use App\Models\Api\User\Farmer;
 use App\Models\User;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -20,6 +21,7 @@ class AppServiceProvider extends ServiceProvider
         Relation::enforceMorphMap([
             'user' => User::class,
             'admin' => Admin::class,
+            'farmer' => Farmer::class,
         ]);
 
         ResetPassword::createUrlUsing(function (object $notifiable, string $token) {
