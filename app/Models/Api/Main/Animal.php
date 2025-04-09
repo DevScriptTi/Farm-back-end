@@ -7,6 +7,8 @@ use App\Models\Api\Extra\Illness;
 use App\Models\Api\Extra\QRCode;
 use App\Models\Api\Extra\Vaccine;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
+use SimpleSoftwareIO\QrCode\Facades\QrCode as QrCodeGenerator;
 
 class Animal extends Model
 {
@@ -15,6 +17,42 @@ class Animal extends Model
     public function farm()
     {
         return $this->belongsTo(Farm::class);
+    }
+
+    public static function boot(){
+        parent::boot();
+        static::addGlobalScope('animal', function($query){
+            $key = Auth::user()->key;
+            if($key->keyable_type == 'farmer'){
+                $query->whereHas('farm', function($query){
+                    $query->where('farmer_id', Auth::user()->key->keyable_id);
+                });
+            }
+        });
+        static::creating(function($model){
+            $model->slug = str()->random(10);
+        });
+        static::created(function($model){
+            $model->qrCode()->create([
+                'path' => tap("qrcodes/{$model->slug}.png", function ($path) use ($model) {
+                    $storagePath = storage_path("app/public/{$path}");
+                    if (!file_exists(dirname($storagePath))) {
+                        mkdir(dirname($storagePath), 0755, true);
+                    }
+                    QrCodeGenerator::format('png')->size(200)->generate($model->slug, $storagePath);
+                }),
+            ]);
+        });
+        static::deleting(function($model){
+            if ($model->qrCode) {
+                $qrCodePath = storage_path('app/public/' . $model->qrCode->path);
+                if (file_exists($qrCodePath)) {
+                    unlink($qrCodePath);
+                }
+            }
+            $model->qrCode()->delete();
+
+        });
     }
 
     public function animalType()
@@ -40,5 +78,10 @@ class Animal extends Model
     public function qrCode()
     {
         return $this->hasOne(QRCode::class);
+    }
+
+    public function getRouteKeyName()
+    {
+        return 'slug';
     }
 }
