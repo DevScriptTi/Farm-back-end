@@ -5,108 +5,58 @@ namespace App\Http\Controllers\Api\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\Api\Extra\Key;
 use App\Models\User;
-use App\Notifications\ResetPasswordNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
-    public function Register(Request $request){
+    public function register(Request $request)
+    {
         $request->validate([
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|string',
-            'phone' => 'required|string',
-            'token' => 'required|string|exists:keys,value',
+            'email' => ["required", "email", "unique:users,email"],
+            'password' => ["required", "string"],
+            'key' => ["required", "string", "exists:keys,value"]
         ]);
 
-        $key = Key::where('value', $request->token)->first();
-        if($key->status === "used"){
-            return response()->json(['message' => 'Token already used'], 400);
+        $key = Key::where("value", $request->post('key'))->first();
+
+        if ($key->status == "used") {
+            return response()->json(["message" => "This key is alrdy used", "errors" => [
+                "key" => ["This key is alrdy used"]
+            ]], 403);
         }
-        $key->user()->create([
-            'email' => $request->email,
-            'phone' => $request->phone,
-            'password' => bcrypt($request->password),
-        ]);
-        $key->update(['status' => 'used']);
-        return response()->json(['message' => 'User registered successfully'], 201);
+        $key->status = "used";
+        $key->save();
+        $key->user()->create($request->only(['email', 'password']));
+        return response()->json(["message" => "user registred succes"], 200);
     }
 
     public function login(Request $request)
     {
+
         $request->validate([
-            'email' => 'required|email|exists:users,email',
-            'password' => 'required|string',
+            'email' => ["required", "email", "exists:users,email"],
+            'password' => ["required", "string"]
         ]);
 
-        if (!Auth::attempt($request->only('email', 'password'))) {
-            return response()->json(['message' => 'Invalid credentials'], 401);
+        if (!Auth::attempt(['email' => $request->post('email'), 'password' => $request->post('password')])) {
+            return response()->json(["message" => "incorrect password", "errors" => [
+                "password" => ["incorrect password"]
+            ]], 403);
         }
-        $token = User::find(Auth::id())->createToken('Personal Access Token')->plainTextToken;
 
+        $user = Auth::user();
+        $user = $user instanceof User ? $user : User::find($user->id);
+        $token = $user->createToken('token')->plainTextToken;
         return response()->json([
-            'message' => 'Login successful',
-            'token' => $token,
-        ]);
-
+            "token" => $token,
+            "user" => $user->load('key.keyable')
+        ], 200);
     }
+
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();
-        return response()->json(['message' => 'Logout successful']);
-    }
-
-    public function sendResetToken(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|email|exists:users,email',
-        ]);
-        // Generate a random token
-        $token = Str::random(6);
-
-        // Save the token in the password_reset_tokens table
-        DB::table('password_reset_tokens')->updateOrInsert(
-            ['email' => $request->email],
-            ['token' => $token, 'created_at' => now()]
-        );
-
-        // Send the token to the user's email
-        $user = User::where('email', $request->email)->first();
-        if ($user) {
-            $user->notify(new ResetPasswordNotification($token));
-        }
-
-        return response()->json(['message' => 'Password reset token sent to your email.']);
-    }
-
-    public function resetPassword(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|email',
-            'token' => 'required|string',
-            'password' => 'required|string|confirmed',
-        ]);
-
-        $reset = DB::table('password_reset_tokens')
-                    ->where('email', $request->email)
-                    ->where('token', $request->token)
-                    ->first();
-
-        if (!$reset) {
-            return response()->json(['message' => 'Invalid token or email.'], 400);
-        }
-
-        // Update the user's password
-        $user = User::where('email', $request->email)->first();
-        $user->password = Hash::make($request->password);
-        $user->save();
-
-        // Delete the token
-        DB::table('password_reset_tokens')->where('email', $request->email)->delete();
-
-        return response()->json(['message' => 'Password has been reset successfully.']);
+        return response()->json(["message" => "logout success"], 200);
     }
 }
