@@ -22,11 +22,13 @@ class Animal extends Model
     public static function boot(){
         parent::boot();
         static::addGlobalScope('animal', function($query){
-            $key = Auth::user()->key;
-            if($key->keyable_type == 'farmer'){
-                $query->whereHas('farm', function($query){
-                    $query->where('farmer_id', Auth::user()->key->keyable_id);
-                });
+            if (Auth::check()) {
+                $key = Auth::user()->key;
+                if ($key->keyable_type == 'farmer') {
+                    $query->whereHas('farm', function ($query) {
+                        $query->where('farmer_id', Auth::user()->key->keyable_id);
+                    });
+                }
             }
         });
         static::creating(function($model){
