@@ -21,22 +21,20 @@ class FarmSeeder extends Seeder
 
         $farms = [
             [
-                'slug' => Str::slug('Ferme Bouaziz'),
                 'name' => 'Ferme Bouaziz',
                 'mechta_id' => $mechtas->where('name', 'Mechta Ouled Ahmed')->first()->id,
-                'farmer_id' => $farmers->where('username', 'farmer1')->first()->id,
+                'farmer_id' => $farmers->random()->id,
             ],
             [
-                'slug' => Str::slug('Ferme Khelifi'),
                 'name' => 'Ferme Khelifi',
                 'mechta_id' => $mechtas->where('name', 'Mechta Bouzid')->first()->id,
-                'farmer_id' => $farmers->where('username', 'farmer2')->first()->id,
+                'farmer_id' => $farmers->random()->id,
             ],
             [
-                'slug' => Str::slug('Ferme Zohra'),
                 'name' => 'Ferme Zohra',
                 'mechta_id' => $mechtas->where('name', 'Mechta Aït Ali')->first()->id,
-                'farmer_id' => $farmers->where('username', 'farmer3')->first()->id,
+                'farmer_id' => $farmers->random()->id,
+
             ],
         ];
 

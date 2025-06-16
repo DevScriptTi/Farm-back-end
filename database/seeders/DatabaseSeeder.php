@@ -30,9 +30,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $admin =Admin::create(['username'=>'Developer-1234']);
-        $key = $admin->key()->create(['value'=>Str::random(10)]);
-        $key->user()->create(['email'=>'admin@gmail.com','phone'=>'0666675488','password'=>'password']);
+        $admin = Admin::create(['username' => 'Developer-1234', 'name' => 'Fouzi', 'last' => "Ali", 'is_super' => 'yes']);
+        $key = $admin->key;
+        $key->user()->create(['email' => 'admin@gmail.com', 'phone' => '0666675488', 'password' => 'password']);
 
         $this->call([
             WilayaSeeder::class,
@@ -50,6 +50,7 @@ class DatabaseSeeder extends Seeder
             PictureSeeder::class,
             QRCodeSeeder::class,
             KeySeeder::class,
+            VeterinarySeeder::class,
         ]);
     }
 }

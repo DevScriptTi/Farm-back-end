@@ -3,6 +3,7 @@
 namespace App\Models\Api\User;
 
 use App\Models\Api\Extra\Key;
+use App\Models\Api\Main\Picture;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
@@ -10,13 +11,16 @@ class Admin extends Model
 {
     protected $fillable = [
         'username',
+        'name',
+        'last',
+        'is_super'
     ];
 
     public static function boot(){
         parent::boot();
 
         static::creating(function ($model) {
-            $model->slug = str($model->username)->slug() . '-' . mt_rand(10000, 99999);
+            // $model->slug = str($model->username)->slug() . '-' . mt_rand(10000, 99999);
         });
 
         static::created(function ($model) {
@@ -24,7 +28,7 @@ class Admin extends Model
         });
 
         static::updating(function ($model) {
-            $model->slug = str($model->username)->slug() . '-' . mt_rand(10000, 99999);
+            // $model->slug = str($model->username)->slug() . '-' . mt_rand(10000, 99999);
         });
     }
 
@@ -32,9 +36,8 @@ class Admin extends Model
         return $this->morphOne(Key::class, 'keyable');
     }
 
-
-    public function getRouteKey()
-    {
-        return $this->slug;
+    public function photo(){
+        return $this->morphOne(Picture::class,'pictureable');
     }
+
 }

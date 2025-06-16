@@ -11,28 +11,35 @@ use Illuminate\Support\Str;
 
 class Farm extends Model
 {
-    protected $fillable = ['slug', 'name', 'mechta_id', 'farmer_id'];
+    protected $fillable = ['name', 'mechta_id', 'farmer_id'];
 
-    public static function boot(){
+    public static function boot()
+    {
         parent::boot();
         static::addGlobalScope('farmer', function (Builder $builder) {
-            $key = Auth::user()->key;
-            if($key->keyable_type==="farmer"){
-                $builder->where('farmer_id', $key->keyable_id);
+            if (Auth::check()) {
+                $key = Auth::user()->key;
+                if ($key && $key->keyable_type === "farmer") {
+                    $builder->where('farmer_id', $key->keyable_id);
+                }
             }
         });
         static::creating(function ($model) {
-            $model->slug = str()->slug($model->name.'-'.Str::random(5));
-            $key = Auth::user()->key;
-            if($key->keyable_type==="farmer"){
-                $model->farmer_id = $key->keyable_id;
+            // $model->slug = str()->slug($model->name.'-'.Str::random(5));
+            if (Auth::check()) {
+                $key = Auth::user()->key;
+                if ($key && $key->keyable_type === "farmer") {
+                    $model->farmer_id = $key->keyable_id;
+                }
             }
         });
         static::updating(function ($model) {
-            $model->slug = str()->slug($model->name.'-'.Str::random(5));
-            $key = Auth::user()->key;
-            if($key->keyable_type==="farmer"){
-                $model->farmer_id = $key->keyable_id;
+            // $model->slug = str()->slug($model->name.'-'.Str::random(5));
+            if (Auth::check()) {
+                $key = Auth::user()->key;
+                if ($key && $key->keyable_type === "farmer") {
+                    $model->farmer_id = $key->keyable_id;
+                }
             }
         });
     }
@@ -52,8 +59,5 @@ class Farm extends Model
         return $this->hasMany(Animal::class);
     }
 
-    public function getRouteKeyName()
-    {
-        return 'slug';
-    }
+
 }

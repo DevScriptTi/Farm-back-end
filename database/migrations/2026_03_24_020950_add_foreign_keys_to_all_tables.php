@@ -56,6 +56,9 @@ return new class extends Migration
                 $table->foreignId('animal_id')->constrained('animals')->cascadeOnDelete();
                 $table->foreignId('vaccine_id')->constrained('vaccines')->cascadeOnDelete();
             });
+            Schema::table('veterinaries', function (Blueprint $table) { 
+                $table->foreignId('baladiya_id')->constrained('baladiyas')->cascadeOnDelete();
+            });
         });
     }
 

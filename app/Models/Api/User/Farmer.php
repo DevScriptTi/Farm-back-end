@@ -23,17 +23,14 @@ class Farmer extends Model
         return $this->morphOne(Key::class, 'keyable');
     }
 
-    public function farms()
+    public function farm()
     {
-        return $this->hasMany(Farm::class);
+        return $this->hasOne(Farm::class);
     }
 
     public function picture()
     {
         return $this->morphOne(Picture::class, 'pictureable');
     }
-    public function getRouteKeyName()
-    {
-        return 'username';
-    }
+   
 }

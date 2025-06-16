@@ -11,7 +11,7 @@ class AnimalController extends Controller
 
     public function index()
     {
-        $animal = Animal::with(['farm.farmer','animalType' ,'qrCode'])->paginate(10);
+        $animal = Animal::with(['farm'=>['farmer','mechta.baladiya.wilaya'],'animalType' ,'qrCode'])->paginate(10);
         return response()->json(
             [
                 'status' => 'success',
@@ -42,7 +42,7 @@ class AnimalController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Animal created successfully',
-            'data' => $animal->load(['farm.farmer','animalType' ,'qrCode'])
+            'data' => $animal->load(['farm'=>['farmer','mechta.baladiya.wilaya'],'animalType' ,'qrCode'])
         ], 201);
 
     }
@@ -53,7 +53,7 @@ class AnimalController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Data retrieved successfully',
-            'data' => $animal->load(['farm.farmer','animalType' ,'qrCode'])
+            'data' => $animal->load(['farm'=>['farmer','mechta.baladiya.wilaya'],'animalType' ,'qrCode'])
         ]);
     }
 
@@ -80,7 +80,7 @@ class AnimalController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Animal updated successfully',
-            'data' => $animal->load(['farm.farmer','animalType' ,'qrCode'])
+            'data' => $animal->load(['farm'=>['farmer','mechta.baladiya.wilaya'],'animalType' ,'qrCode'])
         ]);
     }
 
