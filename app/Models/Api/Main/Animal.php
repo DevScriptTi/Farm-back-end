@@ -12,7 +12,7 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode as QrCodeGenerator;
 
 class Animal extends Model
 {
-    protected $fillable = ['slug', 'gender', 'weight', 'date_of_birth', 'farm_id', 'animal_type_id'];
+    protected $fillable = ['slug', 'price' , 'gender', 'weight', 'date_of_birth', 'farm_id', 'animal_type_id'];
 
     public function farm()
     {
@@ -34,27 +34,27 @@ class Animal extends Model
         static::creating(function($model){
             $model->slug = str()->random(10);
         });
-        static::created(function($model){
-            $model->qrCode()->create([
-                'path' => tap("qrcodes/{$model->slug}.png", function ($path) use ($model) {
-                    $storagePath = storage_path("app/public/{$path}");
-                    if (!file_exists(dirname($storagePath))) {
-                        mkdir(dirname($storagePath), 0755, true);
-                    }
-                    QrCodeGenerator::format('png')->size(200)->generate($model->slug, $storagePath);
-                }),
-            ]);
-        });
-        static::deleting(function($model){
-            if ($model->qrCode) {
-                $qrCodePath = storage_path('app/public/' . $model->qrCode->path);
-                if (file_exists($qrCodePath)) {
-                    unlink($qrCodePath);
-                }
-            }
-            $model->qrCode()->delete();
+        // static::created(function($model){
+        //     $model->qrCode()->create([
+        //         'path' => tap("qrcodes/{$model->slug}.png", function ($path) use ($model) {
+        //             $storagePath = storage_path("app/public/{$path}");
+        //             if (!file_exists(dirname($storagePath))) {
+        //                 mkdir(dirname($storagePath), 0755, true);
+        //             }
+        //             QrCodeGenerator::format('png')->size(200)->generate($model->slug, $storagePath);
+        //         }),
+        //     ]);
+        // });
+        // static::deleting(function($model){
+        //     if ($model->qrCode) {
+        //         $qrCodePath = storage_path('app/public/' . $model->qrCode->path);
+        //         if (file_exists($qrCodePath)) {
+        //             unlink($qrCodePath);
+        //         }
+        //     }
+        //     $model->qrCode()->delete();
 
-        });
+        // });
     }
 
     public function animalType()

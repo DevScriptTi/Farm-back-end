@@ -30,7 +30,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $admin = Admin::create(['username' => 'Developer-1234', 'name' => 'Fouzi', 'last' => "Ali", 'is_super' => 'yes']);
+        $admin = Admin::create(['username' => 'Developer-1234', 'name' => 'Mohamed', 'last' => "Ali", 'is_super' => 'yes']);
         $key = $admin->key;
         $key->user()->create(['email' => 'admin@gmail.com', 'phone' => '0666675488', 'password' => 'password']);
 

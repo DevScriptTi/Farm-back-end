@@ -18,6 +18,15 @@ class VeterinariesController extends Controller
         ], 200);
     }
 
+    public function allVeterinaries(){
+        $veterinaries = Veterinary::with(['baladiya.wilaya', 'photo'])->paginate(15);
+        return response()->json([
+            'status' => true,
+            'message' => 'Veterinaries retrieved successfully',
+            'data' => $veterinaries
+        ], 200);
+    }
+
     public function store(Request $request)
     {
         $validate = $request->validate([

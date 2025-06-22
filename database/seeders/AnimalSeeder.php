@@ -24,6 +24,7 @@ class AnimalSeeder extends Seeder
             [
                 'slug' => Str::slug('Vache-1'),
                 'gender' => 'female',
+                'price' => mt_rand(15000, 100000) + mt_rand() / mt_getrandmax(),
                 'weight' => 450.5,
                 'date_of_birth' => Carbon::parse('2018-03-15'),
                 'farm_id' => $farms->first()->id,
@@ -32,6 +33,7 @@ class AnimalSeeder extends Seeder
             [
                 'slug' => Str::slug('Mouton-1'),
                 'gender' => 'male',
+                'price' => mt_rand(15000, 100000) + mt_rand() / mt_getrandmax(),
                 'weight' => 65.2,
                 'date_of_birth' => Carbon::parse('2020-05-20'),
                 'farm_id' => $farms->first()->id,
@@ -40,6 +42,7 @@ class AnimalSeeder extends Seeder
             [
                 'slug' => Str::slug('Chèvre-1'),
                 'gender' => 'female',
+                'price' => mt_rand(15000, 100000) + mt_rand() / mt_getrandmax(),
                 'weight' => 42.3,
                 'date_of_birth' => Carbon::parse('2019-07-10'),
                 'farm_id' => $farms->get(1)->id,

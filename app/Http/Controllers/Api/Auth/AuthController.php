@@ -14,6 +14,7 @@ class AuthController extends Controller
     {
         $request->validate([
             'email' => ["required", "email", "unique:users,email"],
+            'phone' => ["required"],
             'password' => ["required", "string"],
             'key' => ["required", "string", "exists:keys,value"]
         ]);
@@ -27,7 +28,7 @@ class AuthController extends Controller
         }
         $key->status = "used";
         $key->save();
-        $key->user()->create($request->only(['email', 'password']));
+        $key->user()->create($request->only(['email','phone', 'password']));
         return response()->json(["message" => "user registred succes"], 200);
     }
 

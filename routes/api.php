@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\Main\FarmController;
 use App\Http\Controllers\Api\Main\FarmerController;
 use App\Http\Controllers\Api\Users\AdminController;
 use App\Http\Controllers\Api\Users\VeterinariesController;
+use App\Models\Api\Extra\AnimalType;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -34,14 +35,20 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::apiResource('admins', AdminController::class);
     Route::post('/admins/admin/generate-key', [AdminController::class, 'createKey']);
-    Route::apiResource('veterinaries', VeterinariesController::class);
+    Route::apiResource('veterinarys', VeterinariesController::class);
     Route::apiResource('farmers', FarmerController::class);
     Route::post('farmers/{farmer}/picture', [FarmerController::class, 'addPicture']);
     Route::patch('farmers/{farmer}/picture', [FarmerController::class, 'changePicture']);
     Route::delete('farmers/{farmer}/picture', [FarmerController::class, 'deletePicture']);
-    Route::match(["get", "post"], 'farmers/{farmer}/key', [FarmerController::class, 'addKey']);
+    Route::match(["get", "post"], 'farmers/{farmer}/generate-key', [FarmerController::class, 'addKey']);
 
     Route::apiResource('farms', FarmController::class);
 
     Route::apiResource('animals', AnimalController::class);
+});
+
+Route::get('allAnimals', [AnimalController::class , 'allAnimals']);
+Route::get('allVeterinaries', [VeterinariesController::class , 'allVeterinaries']);
+Route::get('animalTypes' , function(){
+    return response()->json( AnimalType::all());
 });
