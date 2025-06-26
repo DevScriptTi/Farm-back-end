@@ -8,6 +8,7 @@ use App\Models\Api\Main\Farm;
 use App\Models\Api\User\Farmer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class AnimalController extends Controller
 {
@@ -46,9 +47,8 @@ class AnimalController extends Controller
             'animal_type_id' => 'required|exists:animal_types,id',
         ]);
 
-        $farmer = Farmer::where('id', Auth::user()->key->keyable_id)->first();
-        $validate['farm_id'] = Farm::find($farmer->farm->id)->id;
-
+        $farmer = Farmer::find(Auth::user()->key->keyable->id);
+        $validate['farm_id'] = $farmer->farm->id;
         $animal = Animal::create([
             'gender' => $request->gender,
             'weight' => $request->weight,
@@ -67,8 +67,9 @@ class AnimalController extends Controller
     }
 
 
-    public function show(Animal $animal)
+    public function show($animal)
     {
+        $animal = Animal::find($animal);
         return response()->json([
             'status' => 'success',
             'message' => 'Data retrieved successfully',

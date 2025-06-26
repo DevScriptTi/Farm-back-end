@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Api\Extra\Mechta;
 use App\Models\Api\User\Farmer;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -44,9 +45,15 @@ class FarmerSeeder extends Seeder
                 'date_of_birth' => Carbon::parse('1978-11-30'),
             ],
         ];
+        $mechtas = Mechta::all();
+
 
         foreach ($farmers as $farmer) {
-            Farmer::create($farmer);
+            $farmer = Farmer::create($farmer);
+            $farmer->farm()->create([
+                'name' => $farmer->name . "'s farm",
+                'mechta_id' => $mechtas->random()->id
+            ]);
         }
     }
 }

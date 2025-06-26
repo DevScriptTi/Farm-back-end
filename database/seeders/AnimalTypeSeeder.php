@@ -15,10 +15,10 @@ class AnimalTypeSeeder extends Seeder
     public function run(): void
     {
         $types = [
-            ['name' => 'Vache', 'slug' => Str::slug('Vache')],
-            ['name' => 'Mouton', 'slug' => Str::slug('Mouton')],
-            ['name' => 'Chèvre', 'slug' => Str::slug('Chèvre')],
-            ['name' => 'Poule', 'slug' => Str::slug('Poule')],
+            ['name' => 'Cow', 'slug' => Str::slug('Cow')],
+            ['name' => 'Goat', 'slug' => Str::slug('Goat')],
+            ['name' => 'Sheep', 'slug' => Str::slug('Sheep')],
+            ['name' => 'Horse', 'slug' => Str::slug('Horse')],
         ];
 
         foreach ($types as $type) {

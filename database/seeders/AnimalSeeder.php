@@ -28,7 +28,7 @@ class AnimalSeeder extends Seeder
                 'weight' => 450.5,
                 'date_of_birth' => Carbon::parse('2018-03-15'),
                 'farm_id' => $farms->first()->id,
-                'animal_type_id' => $types->where('name', 'Vache')->first()->id,
+                'animal_type_id' => $types->where('name', 'Cow')->first()->id,
             ],
             [
                 'slug' => Str::slug('Mouton-1'),
@@ -37,7 +37,7 @@ class AnimalSeeder extends Seeder
                 'weight' => 65.2,
                 'date_of_birth' => Carbon::parse('2020-05-20'),
                 'farm_id' => $farms->first()->id,
-                'animal_type_id' => $types->where('name', 'Mouton')->first()->id,
+                'animal_type_id' => $types->where('name', 'Sheep')->first()->id,
             ],
             [
                 'slug' => Str::slug('Chèvre-1'),
@@ -46,7 +46,7 @@ class AnimalSeeder extends Seeder
                 'weight' => 42.3,
                 'date_of_birth' => Carbon::parse('2019-07-10'),
                 'farm_id' => $farms->get(1)->id,
-                'animal_type_id' => $types->where('name', 'Chèvre')->first()->id,
+                'animal_type_id' => $types->where('name', 'Sheep')->first()->id,
             ],
         ];
 

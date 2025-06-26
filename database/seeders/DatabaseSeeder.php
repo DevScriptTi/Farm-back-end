@@ -40,7 +40,7 @@ class DatabaseSeeder extends Seeder
             MechtaSeeder::class,
             AdminSeeder::class,
             FarmerSeeder::class,
-            FarmSeeder::class,
+            // FarmSeeder::class,
             AnimalTypeSeeder::class,
             AnimalSeeder::class,
             IllnessSeeder::class,

@@ -34,27 +34,27 @@ class Animal extends Model
         static::creating(function($model){
             $model->slug = str()->random(10);
         });
-        // static::created(function($model){
-        //     $model->qrCode()->create([
-        //         'path' => tap("qrcodes/{$model->slug}.png", function ($path) use ($model) {
-        //             $storagePath = storage_path("app/public/{$path}");
-        //             if (!file_exists(dirname($storagePath))) {
-        //                 mkdir(dirname($storagePath), 0755, true);
-        //             }
-        //             QrCodeGenerator::format('png')->size(200)->generate($model->slug, $storagePath);
-        //         }),
-        //     ]);
-        // });
-        // static::deleting(function($model){
-        //     if ($model->qrCode) {
-        //         $qrCodePath = storage_path('app/public/' . $model->qrCode->path);
-        //         if (file_exists($qrCodePath)) {
-        //             unlink($qrCodePath);
-        //         }
-        //     }
-        //     $model->qrCode()->delete();
+        static::created(function($model){
+            $model->qrCode()->create([
+                'path' => tap("qrcodes/{$model->id}.png", function ($path) use ($model) {
+                    $storagePath = storage_path("app/public/{$path}");
+                    if (!file_exists(dirname($storagePath))) {
+                        mkdir(dirname($storagePath), 0755, true);
+                    }
+                    QrCodeGenerator::format('png')->size(200)->generate($model->id, $storagePath);
+                }),
+            ]);
+        });
+        static::deleting(function($model){
+            if ($model->qrCode) {
+                $qrCodePath = storage_path('app/public/' . $model->qrCode->path);
+                if (file_exists($qrCodePath)) {
+                    unlink($qrCodePath);
+                }
+            }
+            $model->qrCode()->delete();
 
-        // });
+        });
     }
 
     public function animalType()
